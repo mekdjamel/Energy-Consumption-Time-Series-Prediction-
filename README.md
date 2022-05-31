@@ -77,3 +77,49 @@ with open('Train-Test_opsd_daily_Consumption.pkl', 'wb') as f:
 ```
 train_opsd_daily_Consumption, test_opsd_daily_Consumption = pickle.load(open('Train-Test_opsd_daily_Consumption.pkl', "rb"))
 ```
+
+# Data preprocessing
+
+Normalize the opsd_daily_Consumption (rescaling of the data from the original range so that all values are within the range of 0 and 1.)
+```
+scaler = MinMaxScaler(feature_range=(0, 1))
+train_opsd_daily_Consumption = scaler.fit_transform(train_opsd_daily_Consumption)
+test_opsd_daily_Consumption = scaler.fit_transform(test_opsd_daily_Consumption)
+```
+
+input data with lookback of 7 timesteps(one week), using the function "create_lookback_dataset"
+```
+def create_lookback_dataset(dataset, look_back=1):
+    dataX, dataY = [], []
+    for i in range(len(dataset) - look_back):
+        a = dataset[i:(i + look_back), 0]
+        dataX.append(a)
+        dataY.append(dataset[i + look_back, 0])
+    return np.array(dataX), np.array(dataY)
+ ```   
+
+# Simple LSTM model Prediction
+Reshape the input data to fit into the predictive model
+```
+trainX_opsd_daily_Consumption = np.reshape(trainX_opsd_daily_Consumption, (trainX_opsd_daily_Consumption.shape[0], trainX_opsd_daily_Consumption.shape[1], 1))
+testX_opsd_daily_Consumption = np.reshape(testX_opsd_daily_Consumption, (testX_opsd_daily_Consumption.shape[0], testX_opsd_daily_Consumption.shape[1], 1))
+```
+The predictive model
+```
+""""""""""""""""'MODEL PREDICTION'"""""""""""""""
+input = Input(shape=(trainX_opsd_daily_Consumption.shape[1], trainX_opsd_daily_Consumption.shape[2]), name='history_Finput')
+out = LSTM(64, activation='tanh')(input)
+out = Dense(64, activation='relu')(out)
+main_output = Dense(1, activation='relu', name='main_output')(out)
+
+model = Model(inputs=input, outputs=main_output)
+model.compile(loss='mean_squared_error', optimizer='adam')
+history = model.fit(trainX_opsd_daily_Consumption, trainY_opsd_daily_Consumption, epochs=100,
+                        batch_size=128,
+                        validation_split=0.2,
+                        verbose=2,
+                        shuffle=False)
+```
+                    
+## Result LSTM model Prediction
+Test Score RMSE:  67.907

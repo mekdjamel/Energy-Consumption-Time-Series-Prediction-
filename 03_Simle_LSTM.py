@@ -52,3 +52,12 @@ testPredict = scaler.inverse_transform(testPredict)
 testY_opsd_daily_Consumption = scaler.inverse_transform([testY_opsd_daily_Consumption])
 RMSE = math.sqrt(mean_squared_error(testY_opsd_daily_Consumption[0], testPredict[:, 0]))
 print('Test Score RMSE: ', RMSE)
+
+
+# Save the trained model and the RMSE result
+with open('03LSTM_Results.pkl', 'wb') as f:
+    pickle.dump([history, testPredict, testY_opsd_daily_Consumption, RMSE], f)
+
+f = open('03LSTM_Results.txt', 'a')
+f.write('03LSTM_Results.pkl:' + str(RMSE) + '\n')
+f.close()

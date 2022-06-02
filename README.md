@@ -125,7 +125,9 @@ history = model.fit(trainX_opsd_daily_Consumption, trainY_opsd_daily_Consumption
 Test Score RMSE:  67.389
 
 Training model result:
+
 ![Training model](Figure_model_train.svg)
 
 Output for Electricity consumption prediction:
-![prediction result](Figure_Forecasting result.svg)
+
+![Daily Energy prediction results](Figure_prediction_result.svg)

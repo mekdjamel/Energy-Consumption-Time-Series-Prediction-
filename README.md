@@ -122,4 +122,4 @@ history = model.fit(trainX_opsd_daily_Consumption, trainY_opsd_daily_Consumption
 ```
                     
 ## Result LSTM model Prediction
-Test Score RMSE:  67.907
+Test Score RMSE:  67.389
